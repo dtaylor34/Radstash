@@ -1,4 +1,4 @@
-# The Collector's Vault — Development Plan
+# Radstash — Development Plan
 
 > **Last Updated:** March 4, 2026
 > **Author:** Darrell (Rivet Studio)
@@ -192,7 +192,7 @@ cp .env.example .env
 
 Paste this message to start a new session:
 
-> I'm building The Collector's Vault app. Here are two files that describe the architecture:
+> I'm building Radstash app. Here are two files that describe the architecture:
 > 1. `.cursorrules` — project structure, tech stack, styling rules
 > 2. `PLAN.md` — current state, what's done, what's next
 >
@@ -206,6 +206,6 @@ Paste this message to start a new session:
 
 This project merges two earlier prototypes:
 - **Radstash** (Sep 2025): Multi-category cataloging, landing page, Firebase auth, drag-drop
-- **Collector's Vault** (Mar 2026): Comics pricing, auction marketplace, anonymity, location
+- **Radstash** (Mar 2026): Comics pricing, auction marketplace, anonymity, location
 
-The formal merge spec is in `Collectors-Vault-Merged-Spec-v2.docx`.
+The formal merge spec is in `Radstash-Merged-Spec-v2.docx`.

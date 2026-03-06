@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════
--- The Collector's Vault — Initial Schema Migration
+-- Radstash — Initial Schema Migration
 -- Supabase PostgreSQL with Row-Level Security
 -- ═══════════════════════════════════════════════════════════════
 

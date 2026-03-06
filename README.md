@@ -1,4 +1,4 @@
-# The Collector's Vault
+# Radstash
 
 Cross-platform collectibles management + anonymous marketplace.
 
@@ -21,7 +21,7 @@ npx expo start
 ```
 
 > **⚠️ Path Warning:** Make sure your project folder path has NO SPACES.
-> Use `collectors-vault` not `Collectors Vault`. Spaces in the path break Metro bundler.
+> Use `radstash` (no spaces in path). Spaces in the path break Metro bundler.
 > A `metro.config.js` workaround is included, but avoiding spaces entirely is safest.
 
 Then:
@@ -36,7 +36,7 @@ Then:
 
 This project unifies two earlier prototypes:
 - **Radstash** (Sep 2025): Multi-category cataloging, landing page, drag-drop uploads, Firebase auth
-- **Collector's Vault** (Mar 2026): Comics pricing, auction marketplace, anonymity, location proximity
+- **Radstash** (Mar 2026): Comics pricing, auction marketplace, anonymity, location proximity
 
 ---
 
@@ -60,7 +60,7 @@ Each category has its own condition grading system and affiliate partners.
 ## Project Structure
 
 ```
-collectors-vault/
+radstash/
 ├── app/                    # Expo Router screens
 │   ├── _layout.tsx         # Root layout (dark theme)
 │   └── (tabs)/             # Bottom tab navigator

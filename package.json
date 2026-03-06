@@ -1,5 +1,5 @@
 {
-  "name": "collectors-vault",
+  "name": "radstash",
   "version": "2.0.0",
   "private": true,
   "main": "expo-router/entry",

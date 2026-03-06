@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Types & Seed Data — The Collector's Vault
+// Types & Seed Data — Radstash
 // ═══════════════════════════════════════════════════════════════
 
 export type Condition = 'poor' | 'good' | 'fine' | 'vf' | 'nm' | 'cgc_9_8';
@@ -640,7 +640,7 @@ export function getItemHistory(dbId: string): HistoryEntry[] {
   const entry = PRICING_DB.find(e => e.db_id === dbId);
   if (!entry) return [];
   return [
-    { id: `auto-${dbId}`, title: entry.significance, summary: `${entry.title} (${entry.year}) by ${entry.creators}. Published by ${entry.publisher}. ${entry.rarity} rarity.`, source: 'Collector\'s Vault Database', sourceUrl: '', date: String(entry.year) },
+    { id: `auto-${dbId}`, title: entry.significance, summary: `${entry.title} (${entry.year}) by ${entry.creators}. Published by ${entry.publisher}. ${entry.rarity} rarity.`, source: 'Radstash Database', sourceUrl: '', date: String(entry.year) },
   ];
 }
 

@@ -1,5 +1,5 @@
 /**
- * The Collector's Vault — Material Design 3 Theme System
+ * Radstash — Material Design 3 Theme System
  * 3 modes: Dark (default), Light, High Contrast
  * Based on M3 color roles: https://m3.material.io/styles/color/roles
  *

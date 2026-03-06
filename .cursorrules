@@ -1,9 +1,9 @@
-# Collector's Vault — Cursor Rules
+# Radstash — Cursor Rules
 # These rules help Cursor (and Claude) understand the project architecture.
 # Drop this in the project root as .cursorrules
 
 ## PROJECT OVERVIEW
-The Collector's Vault is a cross-platform collectibles management + anonymous marketplace app.
+Radstash is a cross-platform collectibles management + anonymous marketplace app.
 Comics, trading cards, sneakers, fashion, coins, jewelry, vinyl, art — any collectible.
 Users scan items with AI, track values, and trade on an anonymous auction marketplace.
 

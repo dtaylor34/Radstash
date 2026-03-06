@@ -67,7 +67,7 @@ export async function getCoverUrl(dbId: string): Promise<string | null> {
     try {
       const url = `${BASE}/issue/4000-${cvId}/?api_key=${API_KEY}&format=json&field_list=image`;
       const res = await fetch(proxyUrl(url), {
-        headers: { 'User-Agent': 'CollectorsVault/1.0' },
+        headers: { 'User-Agent': 'Radstash/1.0' },
       });
       const data = await res.json();
       const imageUrl =
@@ -90,7 +90,7 @@ export async function getCoverUrl(dbId: string): Promise<string | null> {
     try {
       const url = `${BASE}/search/?api_key=${API_KEY}&format=json&resources=issue&query=${encodeURIComponent(searchQuery)}&field_list=image,name&limit=1`;
       const res = await fetch(proxyUrl(url), {
-        headers: { 'User-Agent': 'CollectorsVault/1.0' },
+        headers: { 'User-Agent': 'Radstash/1.0' },
       });
       const data = await res.json();
       const imageUrl = data?.results?.[0]?.image?.small_url ?? null;
@@ -136,7 +136,7 @@ export async function searchCover(query: string): Promise<string | null> {
   try {
     const url = `${BASE}/search/?api_key=${API_KEY}&format=json&resources=issue&query=${encodeURIComponent(query)}&field_list=image,name&limit=1`;
     const res = await fetch(proxyUrl(url), {
-      headers: { 'User-Agent': 'CollectorsVault/1.0' },
+      headers: { 'User-Agent': 'Radstash/1.0' },
     });
     const data = await res.json();
     return data?.results?.[0]?.image?.small_url ?? null;
