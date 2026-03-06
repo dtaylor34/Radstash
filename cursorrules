@@ -1,0 +1,202 @@
+# Collector's Vault — Cursor Rules
+# These rules help Cursor (and Claude) understand the project architecture.
+# Drop this in the project root as .cursorrules
+
+## PROJECT OVERVIEW
+The Collector's Vault is a cross-platform collectibles management + anonymous marketplace app.
+Comics, trading cards, sneakers, fashion, coins, jewelry, vinyl, art — any collectible.
+Users scan items with AI, track values, and trade on an anonymous auction marketplace.
+
+- **Framework**: Expo (React Native) with expo-router (file-based routing)
+- **Language**: TypeScript (strict)
+- **Platforms**: Web (localhost:8081), iOS, Android
+- **Backend**: Firebase Auth + Storage, Supabase (Postgres + Edge Functions)
+- **AI**: Claude Vision API for item identification
+- **Data**: Comic Vine API for cover images, PriceCharting affiliate for pricing
+- **Design System**: Material Design 3 color roles + custom vault dark aesthetic
+
+## TECH STACK
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Expo ~52, expo-router ~4 |
+| UI | React Native, StyleSheet (no Tailwind) |
+| Icons | @expo/vector-icons (MaterialIcons) via `lib/icons.tsx` |
+| Theme | 3 modes: Dark, Light, High Contrast via `hooks/useTheme.tsx` |
+| State | React useState/useContext (local, no Redux) |
+| Auth | Firebase Auth (configure in .env) |
+| Database | Supabase (PostgreSQL + RLS) |
+| Storage | Firebase Storage (photos, EXIF stripped) |
+| Realtime | Supabase Realtime (live bids) |
+| AI | Anthropic Claude Vision via Edge Function |
+| Covers | Comic Vine API (free, 200 req/hr) |
+| Payments | Stripe Connect (Phase 3) |
+
+## FILE STRUCTURE
+
+```
+collectors-vault/
+├── app/                        # expo-router screens
+│   ├── _layout.tsx             # Root layout — wraps ThemeProvider
+│   ├── index.tsx               # Redirect to /(tabs)/vault
+│   └── (tabs)/
+│       ├── _layout.tsx         # Tab bar — reads useTheme() for colors
+│       ├── vault.tsx           # Collection dashboard + item detail
+│       ├── scan.tsx            # Camera AI identification (category-aware)
+│       ├── auction.tsx         # Auction Block marketplace
+│       ├── browse.tsx          # Public vault directory
+│       └── profile.tsx         # Settings, theme toggle, metro picker
+├── components/
+│   └── index.tsx               # Shared: CoverThumbnail, VaultIdBadge, LocationBadge,
+│                               # ConditionPicker, CategorySelector, AffiliateLinks, ItemThumbnail
+├── hooks/
+│   ├── useAuth.ts              # Firebase auth state
+│   ├── useCamera.ts            # expo-image-picker wrapper
+│   ├── useCollection.ts        # Collection CRUD (local state, Supabase-ready)
+│   ├── useListings.ts          # Auction marketplace state
+│   └── useTheme.tsx            # Theme context: { mode, colors, setMode }
+├── lib/
+│   ├── theme.ts                # M3 color tokens: THEMES, THEME_OPTIONS, conditionColors, etc.
+│   ├── typography.ts           # Roboto fonts + M3 type scale: fonts.bold, typography.titleLarge
+│   ├── icons.tsx               # Material Icon helper: <Icon name="vault" size={24} />
+│   ├── data.ts                 # Types, seed data, 10 categories, pricing DB, condition systems
+│   ├── comicvine.ts            # Comic Vine API: getCoverUrl(), searchCover(), CORS proxy
+│   ├── ai/identify.ts          # Claude Vision: category-aware prompts
+│   ├── db/supabase.ts          # Supabase client + typed queries + realtime
+│   ├── db/firebase.ts          # Firebase Auth + Storage + EXIF stripping
+│   ├── anonymity/trustLevels.ts # 4 trust levels, visibility rules
+│   ├── location/metros.ts      # Proximity calculation (local/state/region)
+│   ├── search/fuzzyMatch.ts    # Client-side fuzzy search
+│   └── export/csv.ts           # CSV export + insurance valuation
+├── supabase/
+│   ├── migrations/001_initial_schema.sql  # Full Postgres schema + RLS + seed data
+│   └── functions/
+│       ├── identify-item/index.ts         # Claude Vision Edge Function
+│       └── validate-bid/index.ts          # Bid validation + anti-sniping
+├── assets/                     # App icons, splash screen
+├── .env.example                # All env vars documented
+├── .cursorrules                # This file
+├── PLAN.md                     # Architecture & task tracking
+├── app.json                    # Expo config (output: "single" for dev)
+├── eas.json                    # EAS Build config
+├── metro.config.js             # Path-with-spaces workaround
+├── package.json                # v2.0.0
+└── tsconfig.json               # Strict mode
+```
+
+## THEME SYSTEM
+
+The app uses a React Context-based theme. Three modes: dark, light, high_contrast.
+
+**How to use in any screen:**
+```tsx
+import { useTheme } from '../hooks/useTheme';
+const { colors, mode, setMode } = useTheme();
+// Then use colors.background, colors.surface, colors.onSurface, etc.
+```
+
+**How colors are structured (Material Design 3 roles):**
+- `background` — App background
+- `surface` / `surfaceContainer` / `surfaceContainerHigh` — Elevation levels
+- `onSurface` / `onSurfaceVariant` — Text on those surfaces
+- `primary` / `onPrimary` / `primaryContainer` / `onPrimaryContainer` — Brand (gold)
+- `outline` / `outlineVariant` — Borders
+- `error` / `success` / `warning` / `info` — Semantic
+- Legacy aliases exist (`textPrimary` = `onSurface`, etc.) for backward compat
+
+**Condition colors are theme-independent** — always vivid regardless of mode.
+They live in `conditionColors` (exported from theme.ts).
+
+**CRITICAL:** All new screens MUST use `useTheme()` instead of importing `colors` directly.
+The legacy `colors` export defaults to dark and won't respond to theme changes.
+
+## ICONS
+
+Use Material Design icons via the `Icon` component:
+```tsx
+import { Icon } from '../lib/icons';
+<Icon name="vault" size={24} color={colors.primary} />
+```
+
+Semantic icon names are mapped in `lib/icons.tsx` — add new mappings there, not hardcoded icon strings in screens.
+
+**DO NOT use emoji for UI elements.** Emoji are only for user-facing content (collection names, chat).
+Tab bar, buttons, badges, and chrome should use Material Icons.
+
+## STYLING RULES
+
+1. **Use `StyleSheet.create()`** — no inline objects for repeated styles
+2. **NO Tailwind** — React Native doesn't support it natively
+3. **Use theme tokens** — `colors.surface` not `'#0D0D1E'`
+4. **Border radius**: 8 for small (badges), 12 for cards, 14 for sections, 20 for pills
+5. **Spacing**: 8/12/16/20/24 scale
+6. **Font**: Roboto via `@expo-google-fonts/roboto`, loaded in root `_layout.tsx`
+7. **Font tokens**: Use `fonts.regular`, `fonts.bold` from `lib/typography.ts`
+8. **Type scale**: Use `typography.titleLarge`, `typography.bodyMedium` etc. (M3 scale)
+9. **Vault IDs**: Use `fonts.mono` (Courier) for vault numbers and prices
+8. **Shadows**: None (dark mode) — use borders with alpha instead
+9. **Animations**: Keep minimal — React Native Reanimated available if needed
+
+## DATA ARCHITECTURE
+
+**Seed data** (local, no backend needed):
+- `PRICING_DB` — 18 Bronze Age comic keys with 6-condition pricing
+- `SEED_COLLECTIONS` — 4 user collections (comics + cards + sneakers)
+- `SEED_LISTINGS` — 8 auction listings
+- `ANON_USERS` — 6 anonymous vault profiles
+- `METROS` — 12 US metro areas
+
+**10 Collectible Categories** (in `COLLECTIBLE_TYPES`):
+comics, cards, figures, coins, fashion, shoes, jewelry, vinyl, art, other
+
+Each category has:
+- `CATEGORY_CONDITIONS[category]` — 6 condition grades
+- `AFFILIATE_PARTNERS[category]` — Partner links
+- Category-aware AI prompt in `lib/ai/identify.ts`
+
+**Production data flow** (not yet wired):
+Screen → Hook → Supabase Client → PostgreSQL (with RLS)
+Photos → Firebase Storage → CDN URL → Supabase record
+
+## ANONYMITY SYSTEM
+
+Every user is a Vault ID (e.g., "Vault #8847"). Real names never shown.
+4 trust levels gate visibility:
+- Level 0 (Anonymous): Vault ID only
+- Level 1 (Verified): + metro area
+- Level 2 (Trusted): + transaction count, member since
+- Level 3 (Connected): + mutual name sharing via encrypted DM
+
+## WHEN MAKING CHANGES
+
+1. **New screen?** Create in `app/(tabs)/` or `app/` — use `useTheme()` for all colors
+2. **New component?** Add to `components/index.tsx` or create a new file in `components/`
+3. **New icon?** Add mapping to `lib/icons.tsx` ICON_MAP, then use `<Icon name="x" />`
+4. **New theme color?** Add to `ThemeColors` interface AND all 3 theme objects in `theme.ts`
+5. **New data type?** Add to `lib/data.ts` types section
+6. **New API?** Add to `lib/` with proper error handling + caching
+7. **Database change?** Add new migration file in `supabase/migrations/`
+
+## ENV VARS (from .env)
+
+```
+EXPO_PUBLIC_SUPABASE_URL=
+EXPO_PUBLIC_SUPABASE_ANON_KEY=
+EXPO_PUBLIC_FIREBASE_API_KEY=
+EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=
+EXPO_PUBLIC_FIREBASE_PROJECT_ID=
+EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET=
+EXPO_PUBLIC_COMICVINE_API_KEY=        # Comic Vine cover images
+EXPO_PUBLIC_ANTHROPIC_API_KEY=        # Client-side (dev only)
+ANTHROPIC_API_KEY=                     # Server-side only (Edge Function)
+```
+
+## COMMON COMMANDS
+
+```bash
+npx expo start --clear        # Dev server (cache cleared)
+npx expo start                # Dev server
+# Press w → web, i → iOS sim, a → Android emu
+eas build --platform ios       # Production iOS build
+eas build --platform android   # Production Android build
+```
